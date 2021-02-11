@@ -5,9 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ghost
-  - Pellet
   - Speed
   - Power
+  - pellet
   layers:
   - Default
   - TransparentFX
@@ -42,11 +42,11 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Default
-    uniqueID: 0
-    locked: 0
   - name: Background
     uniqueID: 1099689209
+    locked: 0
+  - name: Default
+    uniqueID: 0
     locked: 0
   - name: Level2
     uniqueID: 3473464725

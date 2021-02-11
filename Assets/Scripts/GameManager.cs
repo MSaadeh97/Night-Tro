@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public Text scoreText;
     static public int score;
 
-    public enum GameState { Init, Game, Dead, Scores }
+    public enum GameState { Menu, Game, Dead, Paused }
     public static GameState gameState;
 
     private GameObject knightro;
@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
         {
             if (_instance == null)
             {
-               // _instance = GameObject.FindObjectsOfType<GameManager>();
+                _instance = GameObject.FindObjectOfType<GameManager>();
                 DontDestroyOnLoad(_instance.gameObject);
             }
 
@@ -77,11 +77,10 @@ public class GameManager : MonoBehaviour
         ResetVars();
 
 
-        // Adjust Ghost variables!
-        //clyde.GetComponent<GhostMove>().speed += Level * ghostSpeed;
-        //blinky.GetComponent<GhostMove>().speed += Level * ghostSpeed;
-        //pinky.GetComponent<GhostMove>().speed += Level * ghostSpeed;
-        //inky.GetComponent<GhostMove>().speed += Level * ghostSpeed;
+        clyde.GetComponent<GhostAI>().speed += Level * ghostSpeed;
+        blinky.GetComponent<GhostAI>().speed += Level * ghostSpeed;
+        pinky.GetComponent<GhostAI>().speed += Level * ghostSpeed;
+        inky.GetComponent<GhostAI>().speed += Level * ghostSpeed;
         knightro.GetComponent<PlayerController>().speed += Level * ghostSpeed / 2;
     }
 
@@ -113,10 +112,10 @@ public class GameManager : MonoBehaviour
         clyde.transform.position = new Vector3(12.5f, 17f, 0f);
 
         knightro.GetComponent<PlayerController>().ResetDestination();
-        //blinky.GetComponent<GhostMove>().InitializeGhost();
-        //pinky.GetComponent<GhostMove>().InitializeGhost();
-        //inky.GetComponent<GhostMove>().InitializeGhost();
-        //clyde.GetComponent<GhostMove>().InitializeGhost();
+        blinky.GetComponent<GhostAI>().InitializeGhost();
+        pinky.GetComponent<GhostAI>().InitializeGhost();
+        inky.GetComponent<GhostAI>().InitializeGhost();
+        clyde.GetComponent<GhostAI>().InitializeGhost();
 
         gameState = GameState.Init;
 
@@ -132,19 +131,19 @@ public class GameManager : MonoBehaviour
     public void ScareGhosts()
     {
         scared = true;
-        //blinky.GetComponent<GhostMove>().Frighten();
-        //pinky.GetComponent<GhostMove>().Frighten();
-        //inky.GetComponent<GhostMove>().Frighten();
-        //clyde.GetComponent<GhostMove>().Frighten();
+        blinky.GetComponent<GhostAI>().Frighten();
+        pinky.GetComponent<GhostAI>().Frighten();
+        inky.GetComponent<GhostAI>().Frighten();
+        clyde.GetComponent<GhostAI>().Frighten();
         _timeToCalm = Time.time + scareLength;
     }
     public void CalmGhosts()
     {
         scared = false;
-        //blinky.GetComponent<GhostMove>().Calm();
-        //pinky.GetComponent<GhostMove>().Calm();
-        //inky.GetComponent<GhostMove>().Calm();
-        //clyde.GetComponent<GhostMove>().Calm();
+        blinky.GetComponent<GhostAI>().Calm();
+        pinky.GetComponent<GhostAI>().Calm();
+        inky.GetComponent<GhostAI>().Calm();
+        clyde.GetComponent<GhostAI>().Calm();
         PlayerController.killstreak = 0;
     }
     void Assign()
