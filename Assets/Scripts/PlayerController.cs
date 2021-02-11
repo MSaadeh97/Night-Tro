@@ -43,12 +43,30 @@ public class PlayerController : MonoBehaviour
                 Animate();
                 break;
 
-/*            case GameManager.GameState.Dead:
-                if (!_deadPlaying)
+            case GameManager.GameState.Dead:
+                if (!isDead)
                     StartCoroutine("PlayDeathAnimation");
                 break;
-*/
+
         }
+    }
+
+    IEnumerator PlayDeadAnimation()
+    {
+        isDead = true;
+        GetComponent<Animator>().SetBool("isDead", true);
+        yield return new WaitForSeconds(1.02f);
+        GetComponent<Animator>().SetBool("isDead", false);
+        isDead = false;
+
+        if (GameManager.lives <= 0)
+        {
+            //Show End Screen
+        }
+        else
+        {
+            GM.ResetScene();
+        }        
     }
 
     void Animate()
@@ -78,10 +96,38 @@ public class PlayerController : MonoBehaviour
         Vector2 p = Vector2.MoveTowards(transform.position, dest, speed);
         GetComponent<Rigidbody2D>().MovePosition(p);
 
-        if (Input.GetAxis("Horizontal") > 0) queueDir = Vector2.right;
-        if (Input.GetAxis("Horizontal") < 0) queueDir = Vector2.left;
-        if (Input.GetAxis("Vertical") > 0) queueDir = Vector2.up;
-        if (Input.GetAxis("Vertical") < 0) queueDir = Vector2.down;
+        if (Input.GetAxis("Horizontal") > 0)
+        {
+            queueDir = Vector2.right;
+        }
+        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            queueDir = Vector2.right;
+        }
+        if (Input.GetAxis("Horizontal") < 0)
+        {
+            queueDir = Vector2.left;
+        }
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            queueDir = Vector2.left;
+        }
+        if (Input.GetAxis("Vertical") > 0)
+        {
+            queueDir = Vector2.up;
+        }
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            queueDir = Vector2.up;
+        }
+        if (Input.GetAxis("Vertical") < 0)
+        {
+            queueDir = Vector2.down;
+        }
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            queueDir = Vector2.down;
+        }
 
         if (Vector2.Distance(dest, transform.position) < 0.00001f)
         {
@@ -90,7 +136,7 @@ public class PlayerController : MonoBehaviour
                 dest = (Vector2)transform.position + queueDir;
                 dir = queueDir;
             }
-            else   // if next direction is not valid
+            else
             {
                 if (Valid(dir))
                     dest = (Vector2)transform.position + dir;
@@ -107,7 +153,6 @@ public class PlayerController : MonoBehaviour
     {
         killstreak++;
 
-        // limit killstreak at 4
         if (killstreak > 4) killstreak = 4;
 
         Instantiate(points.pointSprites[killstreak - 1], transform.position, Quaternion.identity);
