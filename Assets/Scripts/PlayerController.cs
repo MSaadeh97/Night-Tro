@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = .4f;
+    public float speed = .32f;
 
-    Vector2 dir = Vector2.zero;
-    Vector2 dest = Vector2.zero;
-    Vector2 queueDir = Vector2.zero;
+    public Vector2 dir = Vector2.zero;
+    public Vector2 dest = Vector2.zero;
+    public Vector2 queueDir = Vector2.zero;
 
     public bool isDead = false;
     public bool isVictory = false;
@@ -26,32 +26,39 @@ public class PlayerController : MonoBehaviour
     }
 
     public PointSprites points;
+
+    public int speedUpCounter;
+
     void Start()
     {
+        GetComponent<Animator>().SetFloat("DirX", 0);
+        GetComponent<Animator>().SetFloat("DirY", 0);
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
         //SM = GameObject.Find("Game Manager").GetComponent<ScoreManager>();
         dest = transform.position;
+        GameManager.gameState = GameManager.GameState.Game;
     }
 
 
     void FixedUpdate()
     {
-        switch (GameManager.gameState)
+        UserInput();
+        Animate();
+        if (GameManager.gameState == GameManager.GameState.Game)
         {
-            case GameManager.GameState.Game:
-                UserInput();
-                Animate();
-                break;
+            UserInput();
+            Animate();
+        }
 
-            case GameManager.GameState.Dead:
-                if (!isDead)
-                    StartCoroutine("PlayDeathAnimation");
-                break;
+
+        if (GameManager.gameState == GameManager.GameState.Dead)
+        {
+            StartCoroutine("PlayDeathAnim");
 
         }
     }
 
-    IEnumerator PlayDeadAnimation()
+    IEnumerator PlayDeathAnim()
     {
         isDead = true;
         GetComponent<Animator>().SetBool("isDead", true);
@@ -66,14 +73,14 @@ public class PlayerController : MonoBehaviour
         else
         {
             GM.ResetScene();
-        }        
+        }
     }
 
     void Animate()
     {
-        Vector2 direction = dest - (Vector2)transform.position;
-        GetComponent<Animator>().SetFloat("DirX", direction.x);
-        GetComponent<Animator>().SetFloat("DirY", direction.y);
+        Vector2 dir = dest - (Vector2)transform.position;
+        GetComponent<Animator>().SetFloat("DirX", dir.x);
+        GetComponent<Animator>().SetFloat("DirY", dir.y);
     }
 
     bool Valid(Vector2 direction)
@@ -81,7 +88,7 @@ public class PlayerController : MonoBehaviour
         Vector2 pos = transform.position;
         direction += new Vector2(direction.x * 0.45f, direction.y * 0.45f);
         RaycastHit2D hit = Physics2D.Linecast(pos + direction, pos);
-        return hit.collider.name == "pellet" || (hit.collider == GetComponent<Collider2D>());
+        return hit.collider.name == "Pellet" || (hit.collider == GetComponent<Collider2D>());
     }
 
     public void ResetDestination()
@@ -96,50 +103,44 @@ public class PlayerController : MonoBehaviour
         Vector2 p = Vector2.MoveTowards(transform.position, dest, speed);
         GetComponent<Rigidbody2D>().MovePosition(p);
 
-        if (Input.GetAxis("Horizontal") > 0)
+        if (GameManager.gameState != GameManager.GameState.Dead)
         {
-            queueDir = Vector2.right;
-        }
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            queueDir = Vector2.right;
-        }
-        if (Input.GetAxis("Horizontal") < 0)
-        {
-            queueDir = Vector2.left;
-        }
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            queueDir = Vector2.left;
-        }
-        if (Input.GetAxis("Vertical") > 0)
-        {
-            queueDir = Vector2.up;
-        }
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            queueDir = Vector2.up;
-        }
-        if (Input.GetAxis("Vertical") < 0)
-        {
-            queueDir = Vector2.down;
-        }
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            queueDir = Vector2.down;
-        }
+            if (Input.GetAxis("Horizontal") > 0)
+            {
+                queueDir = Vector2.right;
 
-        if (Vector2.Distance(dest, transform.position) < 0.00001f)
-        {
-            if (Valid(queueDir))
-            {
-                dest = (Vector2)transform.position + queueDir;
-                dir = queueDir;
             }
-            else
+            if (Input.GetAxis("Horizontal") < 0)
             {
-                if (Valid(dir))
-                    dest = (Vector2)transform.position + dir;
+                queueDir = Vector2.left;
+            }
+            if (Input.GetAxis("Vertical") > 0)
+            {
+                queueDir = Vector2.up;
+            }
+            if (Input.GetAxis("Vertical") < 0)
+            {
+                queueDir = Vector2.down;
+            }
+            if (Vector2.Distance(dest, transform.position) < 0.00001f)
+            {
+                if (Valid(queueDir))
+                {
+                    dest = (Vector2)transform.position + queueDir;
+                    dir = queueDir;
+                }
+                else
+                {
+                    if (Valid(dir))
+                        dest = (Vector2)transform.position + dir;
+                }
+            }
+        }
+        if (Input.GetAxis("Horizontal") < 0 || Input.GetAxis("Horizontal") > 0)
+        {
+            if (GameManager.gameState != GameManager.GameState.Paused || GameManager.gameState != GameManager.GameState.Dead)
+            {
+                GameManager.gameState = GameManager.GameState.Game;
             }
         }
     }
@@ -160,5 +161,33 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    void OnTriggerEnter2D(UnityEngine.Collider2D collision)
+    {
+        if (collision.CompareTag("Speed"))
+        {
+            Debug.Log("SpeedUp");
+            speed += .05f;
+            speedUpCounter += 6;
+            StartCoroutine("SpeedUpTimer");
+            Destroy(collision.gameObject);
+        }
+    }
+
+    IEnumerator SpeedUpTimer()
+    {
+        while (speedUpCounter > 0)
+        {
+            yield return new WaitForSeconds(1);
+            speedUpCounter--;
+        }
+        Invoke("SpeedUpEnd", 0);
+    }
+
+    void SpeedUpEnd()
+    {
+        speed = .32f;
+        speedUpCounter = 0;
+        StopCoroutine("SpeedUpTimer");
+    }
 }
 

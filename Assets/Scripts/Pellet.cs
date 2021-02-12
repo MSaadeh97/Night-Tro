@@ -6,10 +6,10 @@ public class Pellet : MonoBehaviour
 {
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.name == "knightro")
+		if (other.tag == "Player")
 		{
 			GameManager.score += 10;
-			GameObject[] pellets = GameObject.FindGameObjectsWithTag("pellets");
+			GameObject[] pellets = GameObject.FindGameObjectsWithTag("Pellet");
 			Destroy(gameObject);
 
 			if (pellets.Length == 1)

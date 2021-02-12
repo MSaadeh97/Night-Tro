@@ -50,8 +50,8 @@ public class GhostAI : MonoBehaviour
 	private bool isWhite = false;
 
 	// handles
-	//public GameGUINavigation GUINav;
-	public PlayerController pacman;
+	public GameGUINav GUINav;
+	public PlayerController PlayerController;
 	private GameManager _gm;
 
 	//-----------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ public class GhostAI : MonoBehaviour
 		_startPos = getStartPosAccordingToName();
 		waypoint = transform.position;  // to avoid flickering animation
 		state = State.Wait;
-		//timeToEndWait = Time.time + waitLength + GUINav.initialDelay;
+		timeToEndWait = Time.time + waitLength + GUINav.initialDelay;
 		InitializeWaypoints(state);
 	}
 
@@ -115,7 +115,7 @@ public class GhostAI : MonoBehaviour
 		transform.position = pos;
 		waypoint = transform.position;  // to avoid flickering animation
 		state = State.Wait;
-		//timeToEndWait = Time.time + waitLength + GUINav.initialDelay;
+		timeToEndWait = Time.time + waitLength + GUINav.initialDelay;
 		InitializeWaypoints(state);
 	}
 
@@ -283,8 +283,6 @@ public class GhostAI : MonoBehaviour
 		return new Vector3();
 	}
 
-	//------------------------------------------------------------------------------------
-	// Update functions
 	void animate()
 	{
 		Vector3 dir = waypoint - transform.position;
@@ -295,14 +293,14 @@ public class GhostAI : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.name == "pacman")
+		if (other.name == "knightro")
 		{
-			//Destroy(other.gameObject);
+			Destroy(other.gameObject);
 			if (state == State.Run)
 			{
 				Calm();
 				InitializeGhost(_startPos);
-				pacman.UpdateScore();
+				PlayerController.UpdateScore();
 			}
 
 			else
@@ -313,8 +311,6 @@ public class GhostAI : MonoBehaviour
 		}
 	}
 
-	//-----------------------------------------------------------------------------------
-	// State functions
 	void Wait()
 	{
 		if (Time.time >= timeToEndWait)
@@ -324,7 +320,6 @@ public class GhostAI : MonoBehaviour
 			InitializeWaypoints(state);
 		}
 
-		// get the next waypoint and move towards it
 		MoveToWaypoint(true);
 	}
 
@@ -332,12 +327,11 @@ public class GhostAI : MonoBehaviour
 	{
 		_timeToWhite = 0;
 
-		// if the Queue is cleared, do some clean up and change the state
 		if (waypoints.Count == 0)
 		{
 			state = State.Scatter;
 
-			//get direction according to sprite name
+	
 			string name = GetComponent<SpriteRenderer>().sprite.name;
 			if (name[name.Length - 1] == '0' || name[name.Length - 1] == '1') direction = Vector3.right;
 			if (name[name.Length - 1] == '2' || name[name.Length - 1] == '3') direction = Vector3.left;
@@ -350,7 +344,6 @@ public class GhostAI : MonoBehaviour
 			return;
 		}
 
-		// get the next waypoint and move towards it
 		MoveToWaypoint();
 	}
 
@@ -363,7 +356,6 @@ public class GhostAI : MonoBehaviour
 			return;
 		}
 
-		// get the next waypoint and move towards it
 		MoveToWaypoint(true);
 
 	}
@@ -371,15 +363,13 @@ public class GhostAI : MonoBehaviour
 	void ChaseAI()
 	{
 
-		// if not at waypoint, move towards it
 		if (Vector3.Distance(transform.position, waypoint) > 0.000000000001)
 		{
 			Vector2 p = Vector2.MoveTowards(transform.position, waypoint, speed);
 			GetComponent<Rigidbody2D>().MovePosition(p);
 		}
 
-		// if at waypoint, run AI module
-		//else GetComponent<AI>().AILogic();
+		else GetComponent<AIs>().AILogic();
 
 	}
 
@@ -389,30 +379,26 @@ public class GhostAI : MonoBehaviour
 
 		if (Time.time >= _timeToWhite && Time.time >= _timeToToggleWhite) ToggleBlueWhite();
 
-		// if not at waypoint, move towards it
 		if (Vector3.Distance(transform.position, waypoint) > 0.000000000001)
 		{
 			Vector2 p = Vector2.MoveTowards(transform.position, waypoint, speed);
 			GetComponent<Rigidbody2D>().MovePosition(p);
 		}
 
-		// if at waypoint, run AI run away logic
-		//else GetComponent<AI>().RunLogic();
+		else GetComponent<AIs>().RunLogic();
 
 	}
 
-	//------------------------------------------------------------------------------
-	// Utility functions
 	void MoveToWaypoint(bool loop = false)
 	{
-		waypoint = waypoints.Peek();        // get the waypoint (CHECK NULL?)
-		if (Vector3.Distance(transform.position, waypoint) > 0.000000000001)    // if its not reached
-		{                                                           // move towards it
-			_direction = Vector3.Normalize(waypoint - transform.position);  // dont screw up waypoint by calling public setter
+		waypoint = waypoints.Peek();  
+		if (Vector3.Distance(transform.position, waypoint) > 0.000000000001) 
+		{                           
+			_direction = Vector3.Normalize(waypoint - transform.position); 
 			Vector2 p = Vector2.MoveTowards(transform.position, waypoint, speed);
 			GetComponent<Rigidbody2D>().MovePosition(p);
 		}
-		else    // if waypoint is reached, remove it from the queue
+		else 
 		{
 			if (loop) waypoints.Enqueue(waypoints.Dequeue());
 			else waypoints.Dequeue();
@@ -432,7 +418,6 @@ public class GhostAI : MonoBehaviour
 
 	public void Calm()
 	{
-		// if the ghost is not running, do nothing
 		if (state != State.Run) return;
 
 		waypoints.Clear();

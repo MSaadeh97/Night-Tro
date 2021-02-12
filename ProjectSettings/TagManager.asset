@@ -5,9 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ghost
+  - Pellet
   - Speed
   - Power
-  - pellet
+  - Node
   layers:
   - Default
   - TransparentFX
@@ -47,9 +48,6 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Level2
-    uniqueID: 3473464725
     locked: 0
   - name: Sprite
     uniqueID: 925984359

@@ -132,7 +132,7 @@ public class AIs : MonoBehaviour
 
 		else
 		{
-			ghost.direction = ghost.direction; 
+			ghost.direction = ghost.direction;
 		}
 	}
 
@@ -149,7 +149,7 @@ public class AIs : MonoBehaviour
 				targetPos = new Vector3(target.position.x + 0.499f, target.position.y + 0.499f);
 				targetTile = tiles[manager.Index((int)targetPos.x, (int)targetPos.y)];
 				break;
-			case "pinky":  
+			case "pinky":
 				dir = target.GetComponent<PlayerController>().getDir();
 				targetPos = new Vector3(target.position.x + 0.499f, target.position.y + 0.499f) + 4 * dir;
 
