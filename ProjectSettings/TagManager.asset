@@ -8,6 +8,7 @@ TagManager:
   - Pellet
   - Speed
   - Power
+  - Node
   layers:
   - Default
   - TransparentFX
@@ -42,14 +43,11 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Default
-    uniqueID: 0
-    locked: 0
   - name: Background
     uniqueID: 1099689209
     locked: 0
-  - name: Level2
-    uniqueID: 3473464725
+  - name: Default
+    uniqueID: 0
     locked: 0
   - name: Sprite
     uniqueID: 925984359
