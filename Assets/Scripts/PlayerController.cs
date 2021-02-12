@@ -36,12 +36,15 @@ public class PlayerController : MonoBehaviour
         GM = GameObject.Find("Game Manager").GetComponent<GameManager>();
         //SM = GameObject.Find("Game Manager").GetComponent<ScoreManager>();
         dest = transform.position;
+        GameManager.gameState = GameManager.GameState.Game;
     }
 
 
     void FixedUpdate()
     {
-        if(GameManager.gameState == GameManager.GameState.Game)
+        UserInput();
+        Animate();
+        if (GameManager.gameState == GameManager.GameState.Game)
         {
             UserInput();
             Animate();

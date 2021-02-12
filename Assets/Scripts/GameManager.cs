@@ -145,7 +145,7 @@ public class GameManager : MonoBehaviour
         clyde.GetComponent<GhostAI>().InitializeGhost();
 
         gameState = GameState.Init;
-
+        Invoke("StartGame", 2);
     }
 
     public void StartGame()
