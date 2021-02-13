@@ -17,7 +17,6 @@ public class GameGUINav : MonoBehaviour
 
 	public Canvas PauseCanvas;
 	public Canvas GameOverCanvas;
-	public Button MenuButton;
 
 	void Start()
 	{
@@ -73,7 +72,7 @@ public class GameGUINav : MonoBehaviour
 			Time.timeScale = 1;
 			PauseCanvas.enabled = false;
 			_paused = false;
-			MenuButton.enabled = true;
+			//MenuButton.enabled = true;
 		}
 
 		else
@@ -81,7 +80,7 @@ public class GameGUINav : MonoBehaviour
 			PauseCanvas.enabled = true;
 			Time.timeScale = 0;
 			_paused = true;
-			MenuButton.enabled = false;
+			//MenuButton.enabled = false;
 		}
 	}
 
