@@ -54,7 +54,6 @@ public class PlayerController : MonoBehaviour
         if (GameManager.gameState == GameManager.GameState.Dead)
         {
             StartCoroutine("PlayDeathAnim");
-
         }
     }
 
@@ -74,6 +73,7 @@ public class PlayerController : MonoBehaviour
         {
             GM.ResetScene();
         }
+        StopCoroutine("PlayDeathAnim");
     }
 
     void Animate()
@@ -93,14 +93,14 @@ public class PlayerController : MonoBehaviour
 
     public void ResetDestination()
     {
-        dest = new Vector2(14.5f, 11f);
+        dest = new Vector2(13f, 11f);
         GetComponent<Animator>().SetFloat("DirX", 1);
         GetComponent<Animator>().SetFloat("DirY", 0);
     }
 
     void UserInput()
     {
-        Vector2 p = Vector2.MoveTowards(transform.position, dest, speed);
+        Vector2 p = Vector2.MoveTowards(transform.position, dest, speed/2);
         GetComponent<Rigidbody2D>().MovePosition(p);
 
         if (GameManager.gameState != GameManager.GameState.Dead)

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class AIs : MonoBehaviour
+public class AI : MonoBehaviour
 {
 
 	public Transform target;

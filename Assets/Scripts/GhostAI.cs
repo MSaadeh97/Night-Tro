@@ -54,8 +54,6 @@ public class GhostAI : MonoBehaviour
 	public PlayerController PlayerController;
 	private GameManager _gm;
 
-	//-----------------------------------------------------------------------------------------
-	// variables end, functions begin
 	void Start()
 	{
 		_gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
@@ -295,7 +293,7 @@ public class GhostAI : MonoBehaviour
 	{
 		if (other.name == "knightro")
 		{
-			Destroy(other.gameObject);
+			//Destroy(other.gameObject);
 			if (state == State.Run)
 			{
 				Calm();
@@ -369,7 +367,7 @@ public class GhostAI : MonoBehaviour
 			GetComponent<Rigidbody2D>().MovePosition(p);
 		}
 
-		else GetComponent<AIs>().AILogic();
+		else GetComponent<AI>().AILogic();
 
 	}
 
@@ -385,7 +383,7 @@ public class GhostAI : MonoBehaviour
 			GetComponent<Rigidbody2D>().MovePosition(p);
 		}
 
-		else GetComponent<AIs>().RunLogic();
+		else GetComponent<AI>().RunLogic();
 
 	}
 
