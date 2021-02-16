@@ -9,6 +9,10 @@ TagManager:
   - Speed
   - Power
   - Node
+  - Ramen
+  - Dango
+  - MilkTea
+  - Sushi
   layers:
   - Default
   - TransparentFX
